@@ -126,10 +126,6 @@ We welcome contributions to Fragaria! Please follow these steps to contribute:
 
 Please ensure your code adheres to the project's coding standards and include tests for new features.
 
-## Fragaria: Advanced Chain of Thought Reasoning API
-
-[... Previous content remains the same ...]
-
 ## License
 
 Fragaria is released under the MIT License. See the [LICENSE](LICENSE) file for details.
