@@ -1,0 +1,34 @@
+llm_provider: openai
+openai_api_key: yUseOwnAPIKey
+groq_api_key: your_groq_api_key_here
+together_api_key: your_together_api_key_here
+
+model_config:
+  openai:
+    classify: gpt-4o
+    generate: gpt-4o
+    analyze: gpt-4o
+    combine: gpt-4o
+    evaluate: gpt-4o
+    adapt: gpt-4o
+  groq:
+    classify: mixtral-8x7b-32768
+    generate: mixtral-8x7b-32768
+    analyze: mixtral-8x7b-32768
+    combine: mixtral-8x7b-32768
+    evaluate: mixtral-8x7b-32768
+    adapt: mixtral-8x7b-32768
+  together:
+    classify: mistralai/Mixtral-8x7B-Instruct-v0.1
+    generate: mistralai/Mixtral-8x7B-Instruct-v0.1
+    analyze: mistralai/Mixtral-8x7B-Instruct-v0.1
+    combine: mistralai/Mixtral-8x7B-Instruct-v0.1
+    evaluate: mistralai/Mixtral-8x7B-Instruct-v0.1
+    adapt: mistralai/Mixtral-8x7B-Instruct-v0.1
+
+database:
+  path: cot_database.db
+
+server:
+  host: 0.0.0.0
+  port: 8000
