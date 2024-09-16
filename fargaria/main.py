@@ -14,6 +14,7 @@ from pydantic import BaseModel
 from contextlib import asynccontextmanager
 import time
 import yaml
+import math
 
 # Load configuration
 with open("config.yaml", "r") as config_file:
@@ -180,26 +181,39 @@ async def update_cot_scores(problem_type: str, paths: List[Dict[str, any]], scor
             c.execute("UPDATE cot_paths SET score = ?, uses = ? WHERE problem_type = ? AND method = ?",
                       (new_score, new_uses, problem_type, method))
         else:
+            # For new paths, insert with the initial score
             c.execute("INSERT INTO cot_paths (problem_type, method, score, uses) VALUES (?, ?, ?, ?)",
                       (problem_type, method, float(scores[method]), 1))
     conn.commit()
     conn.close()
 
-def select_cot_paths(problem_type: str, n: int = 3, exploration_rate: float = 0.2) -> List[Dict[str, any]]:
+def select_cot_paths(problem_type: str, n: int = 3) -> List[Dict[str, any]]:
     conn = sqlite3.connect('cot_database.db')
     c = conn.cursor()
     c.execute("SELECT method, score, uses FROM cot_paths WHERE problem_type = ?", (problem_type,))
     type_scores = {row[0]: {"score": row[1], "uses": row[2]} for row in c.fetchall()}
     conn.close()
     
-    # Exploitation: Select top performing paths
-    sorted_paths = sorted(type_scores.items(), key=lambda x: x[1]["score"] / max(x[1]["uses"], 1), reverse=True)
-    top_paths = [{"method": path, "score": score["score"], "uses": score["uses"]} for path, score in sorted_paths[:n]]
+    total_uses = sum(data["uses"] for data in type_scores.values())
     
-    # Exploration: Randomly replace some paths with new ones
-    for i in range(n):
-        if random.random() < exploration_rate:
-            top_paths[i] = {"method": f"New exploratory path {random.randint(1, 1000)}", "score": 0, "uses": 0}
+    # Calculate UCB scores
+    ucb_scores = {}
+    for method, data in type_scores.items():
+        if data["uses"] == 0:
+            ucb_scores[method] = float('inf')  # Ensure new methods are tried
+        else:
+            average_score = data["score"] / data["uses"]
+            exploration_term = math.sqrt(2 * math.log(total_uses) / data["uses"])
+            ucb_scores[method] = average_score + exploration_term
+    
+    # Select top n paths based on UCB scores
+    sorted_paths = sorted(ucb_scores.items(), key=lambda x: x[1], reverse=True)
+    top_paths = [{"method": method, "score": type_scores[method]["score"], "uses": type_scores[method]["uses"]} 
+                 for method, _ in sorted_paths[:n]]
+    
+    # If we don't have enough paths, add new exploratory paths
+    while len(top_paths) < n:
+        top_paths.append({"method": f"New exploratory path {random.randint(1, 1000)}", "score": 0, "uses": 0})
     
     return top_paths
 
@@ -215,11 +229,14 @@ async def parallel_cot_reasoning(text: str, system_prompt: str) -> Dict[str, any
     problem_type = await classify_or_create_problem_type(text)
     
     stored_paths = select_cot_paths(problem_type)
-    if not stored_paths:
-        cot_paths = await generate_cot_paths(text, problem_type)
-    else:
-        cot_paths = []
-        for path in stored_paths:
+    cot_paths = []
+    for path in stored_paths:
+        if path["uses"] == 0:
+            # For new paths, generate a new approach
+            new_path = await generate_cot_paths(text, problem_type)
+            cot_paths.extend(new_path)
+        else:
+            # For existing paths, adapt them
             adapted_path = await adapt_cot_path(path, problem_type, text, system_prompt)
             cot_paths.append(adapted_path)
     

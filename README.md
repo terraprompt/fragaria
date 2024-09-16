@@ -1,8 +1,8 @@
-# Fragaria: Advanced Chain of Thought Reasoning API
+# Fragaria: Advanced Chain of Thought Reasoning API with Reinforcement Learning
 
 ![Fragaria Logo](header.png)
 
-Fragaria is a powerful and flexible Chain of Thought (CoT) reasoning API that leverages various Language Model (LLM) providers to solve complex problems and answer intricate questions. Named after the botanical genus of strawberries, Fragaria pays homage to the famous "How many 'r's in strawberry?" problem, symbolizing its ability to tackle both simple and complex queries with equal finesse.
+Fragaria is a powerful and flexible Chain of Thought (CoT) reasoning API that leverages various Language Model (LLM) providers and incorporates Reinforcement Learning (RL) techniques to solve complex problems and answer intricate questions. Named after the botanical genus of strawberries, Fragaria pays homage to the famous "How many 'r's in strawberry?" problem, symbolizing its ability to tackle both simple and complex queries with equal finesse.
 
 ## Table of Contents
 
@@ -19,8 +19,9 @@ Fragaria is a powerful and flexible Chain of Thought (CoT) reasoning API that le
 
 - **Multi-Provider Support**: Seamlessly switch between OpenAI, Groq, and Together.ai as LLM providers.
 - **Chain of Thought Reasoning**: Employ sophisticated CoT techniques to break down and solve complex problems.
-- **Adaptive Learning**: Continuously improve problem-solving strategies through a SQLite-based scoring system.
-- **Configurable**: Easy-to-update YAML configuration file for flexible setup.
+- **Reinforcement Learning**: Utilize RL algorithms to continuously improve problem-solving strategies and adapt to new challenges.
+- **Adaptive Learning**: Enhance performance over time through a SQLite-based scoring system integrated with RL techniques.
+- **Configurable**: Easy-to-update YAML configuration file for flexible setup of both LLM and RL parameters.
 - **OpenAPI Documentation**: Comprehensive API documentation with Swagger UI and ReDoc.
 - **CORS Support**: Built-in Cross-Origin Resource Sharing for easy integration with web applications.
 
@@ -103,16 +104,18 @@ To solve these problems, send a POST request to `/v1/chat/completions` with the 
 
 ## How It Works
 
-Fragaria employs a sophisticated Chain of Thought (CoT) reasoning process:
+Fragaria employs a sophisticated Chain of Thought (CoT) reasoning process enhanced by Reinforcement Learning:
 
 1. **Problem Classification**: Categorizes the input problem into known or new problem types.
-2. **CoT Path Generation**: Creates multiple reasoning approaches for the problem type.
+2. **CoT Path Generation**: Creates multiple reasoning approaches for the problem type, influenced by past performance.
 3. **Parallel Execution**: Applies each CoT path to the problem concurrently.
 4. **Result Combination**: Synthesizes the results from different paths.
 5. **Evaluation**: Scores the effectiveness of each approach.
-6. **Adaptive Learning**: Updates the scoring database to improve future performance.
+6. **Reinforcement Learning Update**: Uses the evaluation scores as rewards to update the RL policy, influencing future path selections and generations.
+7. **Adaptive Learning**: Updates the scoring database and RL model to improve future performance.
 
-This process allows Fragaria to tackle a wide range of problems, from simple queries to complex logical puzzles, with increasing efficiency over time.
+This RL-enhanced process allows Fragaria to not only tackle a wide range of problems but also to learn and adapt its strategies over time, becoming increasingly efficient at solving both familiar and novel problem types.
+
 
 ## Contributing
 
@@ -137,7 +140,7 @@ If you use Fragaria in your research or wish to refer to it in your publications
 ```bibtex
 @software{fragaria2024,
   author       = {{Dipankar Sarkar}},
-  title        = {Fragaria: Advanced Chain of Thought Reasoning API},
+  title        = {Fragaria: Advanced Chain of Thought Reasoning API with Reinforcement Learning},
   year         = 2024,
   publisher    = {GitHub},
   journal      = {GitHub repository},
@@ -147,7 +150,7 @@ If you use Fragaria in your research or wish to refer to it in your publications
 
 For academic papers, you can cite Fragaria as:
 
-DIpankar Sarkar. (2024). Fragaria: Advanced Chain of Thought Reasoning API [Computer software]. https://github.com/terraprompt/fragaria
+Dipankar Sarkar. (2024). Fragaria: Advanced Chain of Thought Reasoning API with Reinforcement Learning [Computer software]. https://github.com/terraprompt/fragaria
 
 ---
 
