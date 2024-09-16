@@ -55,7 +55,7 @@ async def classify_or_create_problem_type(text: str) -> str:
 async def generate_cot_paths(text: str, problem_type: str) -> List[str]:
     example_json = json.dumps({"approaches": [{"method":"<method name>","description":"<method description>","steps":["<detailed step 1>","<detailed step 2>","<detailed step 3>"]}]})
     system_prompt = "You are an AI assistant specialized in generating diverse chain of thought approaches for problem-solving. You will respond in JSON."
-    user_prompt = f"Generate list of 3 different chain of thought approaches to analyze the following {problem_type} problem.. Respond in JSON. Example {example_json} \n\nProblem: {text}"
+    user_prompt = f"Generate list of 3 different chain of thought approaches to analyze the following {problem_type} problem. Respond in JSON. Example {example_json} \n\nProblem: {text}"
     
     response = await call_openai_api(model_config["generate"], system_prompt, user_prompt)
     response = json.loads(response)
@@ -83,7 +83,7 @@ async def combine_results(results: List[Dict], problem_type: str) -> str:
     example_json = {"results": {"<method name>": "<text paragraph>"}}
     system_prompt = f"You are an AI assistant specialized in combining and summarizing multiple analysis results for {problem_type} problems. Your task is to synthesize the given results into a coherent summary. You will respond in JSON"
     results_text = "\n\n".join([f"Path: {r['path']}\nResult: {r['result']}" for r in results])
-    user_prompt = f"Combine and summarize the following analysis results as a json with a results key mapped to a text paragraph per result. Please retain the method name:\n\n{results_text}"
+    user_prompt = f"Combine and summarize the following analysis results as a json with a results key mapped to a text paragraph per result. Example {example_json} \n\n{results_text}"
     
     final_result = await call_openai_api(model_config["combine"], system_prompt, user_prompt)
     final_result = json.loads(final_result)
@@ -124,17 +124,13 @@ async def parallel_cot_reasoning(text: str) -> Tuple[str, float, str]:
         cot_paths = await generate_cot_paths(text, problem_type)
     else:
         cot_paths = select_cot_paths(problem_type)
-
-    print(cot_paths)
     
     async with aiohttp.ClientSession() as session:
         tasks = [run_cot_path(session, text, json.dumps(path), problem_type) for path in cot_paths]
         results = await asyncio.gather(*tasks)
         
     final_result = await combine_results(results, problem_type)
-    print(final_result)
     scores = await evaluate_result(text, final_result, problem_type)
-    print(scores)
     highest_score_method = max(scores, key=scores.get)
     
     await update_cot_scores(problem_type, cot_paths, scores)
@@ -147,8 +143,8 @@ async def main():
         #"What are the economic implications of rising inflation rates?",
         #"Design a sustainable urban transportation system for a city of 1 million people.",
         #"Solve the equation: 3x^2 + 7x - 2 = 0",
-        "How many 'r's in strawberry?"
-        # """A princess is as old as the prince will be when the princess is twice as old as the prince was when the princess’s age was half the sum of their present age. What is the age of prince and princess? Provide all solutions to that question.""",
+        "How many 'r's in strawberry?",
+        """A princess is as old as the prince will be when the princess is twice as old as the prince was when the princess’s age was half the sum of their present age. What is the age of prince and princess? Provide all solutions to that question.""",
         #"If all A are B, and some B are C, what can we conclude about A and C?",
         #"How might climate change affect global food security in the next 50 years?",
         #"Compose a haiku about artificial intelligence.",
