@@ -22,16 +22,21 @@ from fastapi.responses import FileResponse
 with open("config.yaml", "r") as config_file:
     config = yaml.safe_load(config_file)
 
+api_key = None
+
 # Set up the OpenAI client based on the selected provider
 LLM_PROVIDER = config["llm_provider"]
 if LLM_PROVIDER == "openai":
+    api_key = config["openai_api_key"]
     client = openai.OpenAI(api_key=config["openai_api_key"])
 elif LLM_PROVIDER == "groq":
+    api_key = config["groq_api_key"]
     client = openai.OpenAI(
         base_url="https://api.groq.com/openai/v1",
         api_key=config["groq_api_key"]
     )
 elif LLM_PROVIDER == "together":
+    api_key = config["together_api_key"]
     client = openai.OpenAI(
         api_key=config["together_api_key"],
         base_url="https://api.together.xyz/v1",
@@ -148,13 +153,13 @@ async def run_cot_path(session: aiohttp.ClientSession, text: str, path: Dict[str
         }
     ) as response:
         result = await response.json()
-        return {"path": path, "result": result['choices'][0]['message']['content']}
+        return {"method": path, "result": result['choices'][0]['message']['content']}
 
 async def combine_results(results: List[Dict], problem_type: str, system_prompt: str) -> str:
     example_json = {"results": {"<method name>": "<text paragraph>"}}
     full_system_prompt = f"{system_prompt}\nYou are an AI assistant specialized in combining and summarizing multiple analysis results for {problem_type} problems. Your task is to synthesize the given results into a coherent summary. You will respond in JSON."
-    results_text = "\n\n".join([f"Path: {json.dumps(r['path'])}\nResult: {r['result']}" for r in results])
-    user_prompt = f"Combine and summarize the following analysis results as a JSON with a results key mapped to a text paragraph per result. Example {json.dumps(example_json)} \n\n{results_text}"
+    results_text = "\n\n".join([f"Method: {json.dumps(r['method'])}\nResult: {r['result']}" for r in results])
+    user_prompt = f"Combine and summarize the following analysis results as a JSON with a results key mapped to a text paragraph per result. Do not modify the method name. Example {json.dumps(example_json)} \n\n{results_text}"
     
     final_result = await call_openai_api(model_config["combine"], full_system_prompt, user_prompt)
     final_result = json.loads(final_result)
@@ -248,21 +253,25 @@ async def parallel_cot_reasoning(text: str, system_prompt: str) -> Dict[str, any
         
     final_result = await combine_results(results, problem_type, system_prompt)
     scores = await evaluate_result(text, final_result, problem_type, system_prompt)
-    
+    highest_score_method = max(scores, key=scores.get)
+
     await update_cot_scores(problem_type, cot_paths, scores)
     
-    return {
-        "problem_type": problem_type,
-        "results": final_result,
-        "scores": scores,
-        "cot_paths": cot_paths
-    }
+    #return {
+    #    "problem_type": problem_type,
+    #    "results": final_result,
+    #    "scores": scores,
+    #    "cot_paths": cot_paths
+    #}
+
+    return final_result["results"][highest_score_method]
+
 @app.post("/v1/chat/completions", response_model=ChatCompletionResponse, tags=["chat"])
 async def chat_completions(request: ChatCompletionRequest, background_tasks: BackgroundTasks):
     """
     Perform a chat completion using the Chain of Thought reasoning process.
     """
-    if request.model not in model_config.values():
+    if request.model not in ["faragia-dev"]:
         raise HTTPException(status_code=400, detail="Unsupported model")
     
     system_prompt = next((msg['content'] for msg in request.messages if msg['role'] == 'system'), "")

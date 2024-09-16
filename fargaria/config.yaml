@@ -1,5 +1,5 @@
 llm_provider: openai
-openai_api_key: yUseOwnAPIKey
+openai_api_key: UseOwnAPIKey
 groq_api_key: your_groq_api_key_here
 together_api_key: your_together_api_key_here
 

@@ -16,7 +16,7 @@
 			'Content-Type': 'application/json',
 		  },
 		  body: JSON.stringify({
-			model: 'gpt-4',  // You might want to make this configurable
+			model: 'faragia-dev', 
 			messages: [
 			  { role: 'user', content: question }
 			]

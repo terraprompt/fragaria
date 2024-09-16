@@ -83,7 +83,7 @@ Here are some sample problems you can solve using Fragaria:
 1. The classic strawberry problem:
    ```json
    {
-     "model": "gpt-4",
+     "model": "faragia-dev",
      "messages": [
        {"role": "user", "content": "How many 'r's in strawberry?"}
      ]
@@ -93,7 +93,7 @@ Here are some sample problems you can solve using Fragaria:
 2. A more complex age-related puzzle:
    ```json
    {
-     "model": "gpt-4",
+     "model": "faragia-dev",
      "messages": [
        {"role": "user", "content": "A princess is as old as the prince will be when the princess is twice as old as the prince was when the princess's age was half the sum of their present age. What is the age of prince and princess? Provide all solutions to that question."}
      ]
