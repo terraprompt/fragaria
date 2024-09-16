@@ -1,4 +1,4 @@
-# Fragaria: Advanced Chain of Thought Reasoning API with Reinforcement Learning
+# Fragaria: Advanced Chain of Thought (CoT) Reasoning API with Reinforcement Learning (RL)
 
 ![Fragaria Logo](header.png)
 
