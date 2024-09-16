@@ -15,6 +15,8 @@ from contextlib import asynccontextmanager
 import time
 import yaml
 import math
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 
 # Load configuration
 with open("config.yaml", "r") as config_file:
@@ -327,6 +329,12 @@ def custom_openapi():
     return app.openapi_schema
 
 app.openapi = custom_openapi
+
+app.mount("/build", StaticFiles(directory="frontend/public/build"), name="static")
+
+@app.get("/")
+async def read_index():
+    return FileResponse('frontend/public/index.html')
 
 if __name__ == "__main__":
     import uvicorn
