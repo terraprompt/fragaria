@@ -126,9 +126,32 @@ We welcome contributions to Fragaria! Please follow these steps to contribute:
 
 Please ensure your code adheres to the project's coding standards and include tests for new features.
 
+## Fragaria: Advanced Chain of Thought Reasoning API
+
+[... Previous content remains the same ...]
+
 ## License
 
 Fragaria is released under the MIT License. See the [LICENSE](LICENSE) file for details.
+
+## Citation
+
+If you use Fragaria in your research or wish to refer to it in your publications, please use the following BibTeX entry:
+
+```bibtex
+@software{fragaria2024,
+  author       = {{Dipankar Sarkar}},
+  title        = {Fragaria: Advanced Chain of Thought Reasoning API},
+  year         = 2024,
+  publisher    = {GitHub},
+  journal      = {GitHub repository},
+  howpublished = {\url{https://github.com/terraprompt/fragaria}},
+}
+```
+
+For academic papers, you can cite Fragaria as:
+
+DIpankar Sarkar. (2024). Fragaria: Advanced Chain of Thought Reasoning API [Computer software]. https://github.com/terraprompt/fragaria
 
 ---
 
