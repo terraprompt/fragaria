@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="fargaria",
+    name="fragaria",
     version="0.1.0",
     packages=find_packages(),
     include_package_data=True,
@@ -16,8 +16,8 @@ setup(
     ],
     entry_points={
         "console_scripts": [
-            "fargaria=fargaria.cli:main",
-            "fargaria-server=fargaria.cli:server",
+            "fragaria=fragaria.cli:main",
+            "fragaria-server=fragaria.cli:server",
         ],
     },
     author="Dipankar Sarkar",

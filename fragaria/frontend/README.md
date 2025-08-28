@@ -56,12 +56,12 @@ The frontend is designed to work seamlessly with the Fragaria backend API. When 
 
 To start the Fragaria server with the frontend:
 ```bash
-fargaria-server
+fragaria-server
 ```
 
 Or directly with Python:
 ```bash
-python -m fargaria.main
+python -m fragaria.main
 ```
 
 The API will be available at `http://localhost:8000` by default, with the frontend served at the root path.
@@ -84,7 +84,7 @@ You can customize the frontend by modifying the Svelte components in the `src` d
 To deploy the frontend, you need to:
 
 1. Build the frontend: `npm run build`
-2. Start the Fragaria server: `fargaria-server`
+2. Start the Fragaria server: `fragaria-server`
 
 The Fragaria server will automatically serve the built frontend files.
 

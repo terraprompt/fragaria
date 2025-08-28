@@ -4,7 +4,7 @@ Unit tests for Fragaria CLI
 
 import sys
 from io import StringIO
-from fargaria.cli import main
+from fragaria.cli import main
 
 def test_cli_import():
     """Test that CLI can be imported without errors"""

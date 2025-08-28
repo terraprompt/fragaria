@@ -5,7 +5,7 @@ See the README.md for instructions on how to set up the configuration file.
 """
 
 import asyncio
-from fargaria import analyze_problem
+from fragaria import analyze_problem
 
 async def main():
     # Example 1: Simple problem

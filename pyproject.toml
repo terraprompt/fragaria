@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "fargaria"
+name = "fragaria" 
 version = "0.1.1"
 description = "Advanced Chain of Thought (CoT) Reasoning API with Reinforcement Learning (RL)"
 authors = ["Dipankar Sarkar <me@dipankar.name>"]
@@ -33,8 +33,8 @@ requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
-fargaria = "fargaria.cli:main"
-fargaria-server = "fargaria.cli:server"
+fragaria = "fragaria.cli:main"
+fragaria-server = "fragaria.cli:server"
 
 [tool.poetry.urls]
 "Bug Tracker" = "https://github.com/terraprompt/fragaria/issues"

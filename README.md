@@ -36,7 +36,7 @@ Fragaria is a powerful and flexible Chain of Thought (CoT) reasoning library tha
 Install Fragaria using pip:
 
 ```bash
-pip install fargaria
+pip install fragaria
 ```
 
 Or if you want to install from source:
@@ -52,10 +52,10 @@ poetry install
 1. Create a configuration file by copying the default:
    ```bash
    # If installed via pip
-   cp /path/to/site-packages/fargaria/config.yaml ./config.yaml
+   cp /path/to/site-packages/fragaria/config.yaml ./config.yaml
    
    # If installed from source
-   cp fargaria/fargaria/config.yaml ./config.yaml
+   cp fragaria/fragaria/config.yaml ./config.yaml
    ```
 
 2. Open `config.yaml` and update the following settings:
@@ -74,7 +74,7 @@ Fragaria can be used as a Python library in your own projects:
 
 ```python
 import asyncio
-from fargaria import analyze_problem
+from fragaria import analyze_problem
 
 async def main():
     result = await analyze_problem("How many 'r's in strawberry?")
@@ -89,7 +89,7 @@ You can also use the `FragariaCore` class for more advanced usage:
 
 ```python
 import asyncio
-from fargaria import FragariaCore
+from fragaria import FragariaCore
 
 async def main():
     # Initialize with a custom config file path (optional)
@@ -104,20 +104,20 @@ asyncio.run(main())
 
 ### Command Line Interface
 
-After installation, you can use the `fargaria` command to analyze problems:
+After installation, you can use the `fragaria` command to analyze problems:
 
 ```bash
 # Analyze a simple problem
-fargaria "How many 'r's in strawberry?"
+fragaria "How many 'r's in strawberry?"
 
 # Use with a system prompt
-fargaria "What is the capital of France?" --system-prompt "You are a helpful geography assistant."
+fragaria "What is the capital of France?" --system-prompt "You are a helpful geography assistant."
 
 # Read from stdin
-echo "A princess is as old as the prince will be when the princess is twice as old as the prince was when the princess's age was half the sum of their present age. What is the age of prince and princess?" | fargaria
+echo "A princess is as old as the prince will be when the princess is twice as old as the prince was when the princess's age was half the sum of their present age. What is the age of prince and princess?" | fragaria
 
 # Get JSON output
-fargaria "How many 'r's in strawberry?" --output-format json
+fragaria "How many 'r's in strawberry?" --output-format json
 ```
 
 ### Web Service
@@ -126,10 +126,10 @@ Start the Fragaria API server:
 
 ```bash
 # Using the CLI command
-fargaria-server
+fragaria-server
 
 # Or directly with Python
-python -m fargaria.main
+python -m fragaria.main
 ```
 
 The API will be available at `http://localhost:8000` (or the host/port specified in your config).
@@ -193,7 +193,7 @@ Fragaria's core library provides a powerful Python API for integrating Chain of 
 The `FragariaCore` class is the primary interface for interacting with Fragaria's reasoning engine:
 
 ```python
-from fargaria.core import FragariaCore
+from fragaria.core import FragariaCore
 
 # Initialize the core with default or custom configuration
 core = FragariaCore()
@@ -219,7 +219,7 @@ Key methods of the `FragariaCore` class include:
 For simpler use cases, Fragaria provides convenience functions:
 
 ```python
-from fargaria.core import analyze_problem
+from fragaria.core import analyze_problem
 
 # Simple async function for analyzing problems
 result = await analyze_problem("How many 'r's in strawberry?")
