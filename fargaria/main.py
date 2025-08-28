@@ -1,3 +1,5 @@
+"""Main module for Fragaria - Chain of Thought Reasoning API"""
+
 import os
 import asyncio
 import aiohttp
@@ -7,11 +9,10 @@ import json
 from collections import defaultdict
 import random
 import sqlite3
-from fastapi import FastAPI, HTTPException, BackgroundTasks, Depends
+from fastapi import FastAPI, HTTPException, BackgroundTasks
 from fastapi.openapi.utils import get_openapi
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from contextlib import asynccontextmanager
 import time
 import yaml
 import math
@@ -19,7 +20,8 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 
 # Load configuration
-with open("config.yaml", "r") as config_file:
+config_path = os.path.join(os.path.dirname(__file__), "config.yaml")
+with open(config_path, "r") as config_file:
     config = yaml.safe_load(config_file)
 
 api_key = None
@@ -49,7 +51,11 @@ model_config = config["model_config"][LLM_PROVIDER]
 
 # Database setup
 def init_db():
-    conn = sqlite3.connect(config["database"]["path"])
+    db_path = config["database"]["path"]
+    # If path is relative, make it relative to the package directory
+    if not os.path.isabs(db_path):
+        db_path = os.path.join(os.path.dirname(__file__), db_path)
+    conn = sqlite3.connect(db_path)
     c = conn.cursor()
     c.execute('''CREATE TABLE IF NOT EXISTS cot_paths
                  (problem_type TEXT, method TEXT, score REAL, uses INTEGER)''')
@@ -108,7 +114,10 @@ async def call_openai_api(model: str, system_prompt: str, user_prompt: str) -> s
     return response.choices[0].message.content.strip()
 
 async def classify_or_create_problem_type(text: str) -> str:
-    conn = sqlite3.connect('cot_database.db')
+    db_path = config["database"]["path"]
+    if not os.path.isabs(db_path):
+        db_path = os.path.join(os.path.dirname(__file__), db_path)
+    conn = sqlite3.connect(db_path)
     c = conn.cursor()
     c.execute("SELECT DISTINCT problem_type FROM cot_paths")
     known_problem_types = set(row[0] for row in c.fetchall())
@@ -141,8 +150,16 @@ async def run_cot_path(session: aiohttp.ClientSession, text: str, path: Dict[str
     full_system_prompt = f"{system_prompt}\nYou are an AI assistant specialized in analyzing {problem_type} problems using specific chain of thought approaches. Your task is to apply the given approach to analyze the problem."
     user_prompt = f"Analyze the following problem using this chain of thought approach: {json.dumps(path)}\n\nProblem: {text}"
     
+    # Use the correct API endpoint based on provider
+    if LLM_PROVIDER == "openai":
+        url = "https://api.openai.com/v1/chat/completions"
+    elif LLM_PROVIDER == "groq":
+        url = "https://api.groq.com/openai/v1/chat/completions"
+    elif LLM_PROVIDER == "together":
+        url = "https://api.together.xyz/v1/chat/completions"
+    
     async with session.post(
-        "https://api.openai.com/v1/chat/completions",
+        url,
         headers={"Authorization": f"Bearer {api_key}"},
         json={
             "model": model_config["analyze"],
@@ -175,7 +192,10 @@ async def evaluate_result(text: str, result: str, problem_type: str, system_prom
     return scores
 
 async def update_cot_scores(problem_type: str, paths: List[Dict[str, any]], scores: Dict[str, float]):
-    conn = sqlite3.connect('cot_database.db')
+    db_path = config["database"]["path"]
+    if not os.path.isabs(db_path):
+        db_path = os.path.join(os.path.dirname(__file__), db_path)
+    conn = sqlite3.connect(db_path)
     c = conn.cursor()
     for path in paths:
         method = path['method']
@@ -195,7 +215,10 @@ async def update_cot_scores(problem_type: str, paths: List[Dict[str, any]], scor
     conn.close()
 
 def select_cot_paths(problem_type: str, n: int = 3) -> List[Dict[str, any]]:
-    conn = sqlite3.connect('cot_database.db')
+    db_path = config["database"]["path"]
+    if not os.path.isabs(db_path):
+        db_path = os.path.join(os.path.dirname(__file__), db_path)
+    conn = sqlite3.connect(db_path)
     c = conn.cursor()
     c.execute("SELECT method, score, uses FROM cot_paths WHERE problem_type = ?", (problem_type,))
     type_scores = {row[0]: {"score": row[1], "uses": row[2]} for row in c.fetchall()}
@@ -257,13 +280,6 @@ async def parallel_cot_reasoning(text: str, system_prompt: str) -> Dict[str, any
 
     await update_cot_scores(problem_type, cot_paths, scores)
     
-    #return {
-    #    "problem_type": problem_type,
-    #    "results": final_result,
-    #    "scores": scores,
-    #    "cot_paths": cot_paths
-    #}
-
     return final_result["results"][highest_score_method]
 
 @app.post("/v1/chat/completions", response_model=ChatCompletionResponse, tags=["chat"])
@@ -339,12 +355,30 @@ def custom_openapi():
 
 app.openapi = custom_openapi
 
-app.mount("/build", StaticFiles(directory="frontend/public/build"), name="static")
+# Mount static files for frontend
+frontend_path = os.path.join(os.path.dirname(__file__), "frontend", "public")
+build_path = os.path.join(frontend_path, "build")
+if os.path.exists(build_path):
+    app.mount("/build", StaticFiles(directory=build_path), name="static")
 
 @app.get("/")
 async def read_index():
-    return FileResponse('frontend/public/index.html')
+    index_path = os.path.join(frontend_path, "index.html")
+    if os.path.exists(index_path):
+        return FileResponse(index_path)
+    return {"message": "Frontend not available"}
+
+def run_server(host: str = None, port: int = None):
+    """Run the Fragaria API server"""
+    import uvicorn
+    
+    # Use config values if not provided
+    if host is None:
+        host = config["server"]["host"]
+    if port is None:
+        port = config["server"]["port"]
+        
+    uvicorn.run(app, host=host, port=port)
 
 if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host=config["server"]["host"], port=config["server"]["port"])
+    run_server()

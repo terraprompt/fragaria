@@ -11,6 +11,8 @@ Fragaria is a powerful and flexible Chain of Thought (CoT) reasoning API that le
 - [Installation](#installation)
 - [Configuration](#configuration)
 - [Usage](#usage)
+  - [Command Line Interface](#command-line-interface)
+  - [Web Service](#web-service)
 - [API Documentation](#api-documentation)
 - [Examples](#examples)
 - [Contributing](#contributing)
@@ -25,31 +27,33 @@ Fragaria is a powerful and flexible Chain of Thought (CoT) reasoning API that le
 - **Configurable**: Easy-to-update YAML configuration file for flexible setup of both LLM and RL parameters.
 - **OpenAPI Documentation**: Comprehensive API documentation with Swagger UI and ReDoc.
 - **CORS Support**: Built-in Cross-Origin Resource Sharing for easy integration with web applications.
+- **CLI Tools**: Command-line interface for easy testing and integration.
 
 ## Installation
 
-1. Clone the repository:
-   ```
-   git clone https://github.com/terraprompt/fragaria.git
-   cd fragaria
-   ```
+Install Fragaria using pip:
 
-2. Create a virtual environment (optional but recommended):
-   ```
-   python -m venv venv
-   source venv/bin/activate  # On Windows, use `venv\Scripts\activate`
-   ```
+```bash
+pip install fargaria
+```
 
-3. Install the required dependencies:
-   ```
-   pip install -r requirements.txt
-   ```
+Or if you want to install from source:
+
+```bash
+git clone https://github.com/terraprompt/fragaria.git
+cd fragaria
+poetry install
+```
 
 ## Configuration
 
-1. Copy the `config.yaml.example` file to `config.yaml`:
-   ```
-   cp config.yaml.example config.yaml
+1. Create a configuration file by copying the default:
+   ```bash
+   # If installed via pip
+   cp /path/to/site-packages/fargaria/config.yaml ./config.yaml
+   
+   # If installed from source
+   cp fargaria/fargaria/config.yaml ./config.yaml
    ```
 
 2. Open `config.yaml` and update the following settings:
@@ -60,14 +64,39 @@ Fragaria is a powerful and flexible Chain of Thought (CoT) reasoning API that le
 
 ## Usage
 
-1. Start the Fragaria API server:
-   ```
-   python main.py
-   ```
+### Command Line Interface
 
-2. The API will be available at `http://localhost:8000` (or the host/port specified in your config).
+After installation, you can use the `fargaria` command to analyze problems:
 
-3. You can now send POST requests to `http://localhost:8000/v1/chat/completions` to use the Chain of Thought reasoning capabilities.
+```bash
+# Analyze a simple problem
+fargaria "How many 'r's in strawberry?"
+
+# Use with a system prompt
+fargaria "What is the capital of France?" --system-prompt "You are a helpful geography assistant."
+
+# Read from stdin
+echo "A princess is as old as the prince will be when the princess is twice as old as the prince was when the princess's age was half the sum of their present age. What is the age of prince and princess?" | fargaria
+
+# Get JSON output
+fargaria "How many 'r's in strawberry?" --output-format json
+```
+
+### Web Service
+
+Start the Fragaria API server:
+
+```bash
+# Using the CLI command
+fargaria-server
+
+# Or directly with Python
+python -m fargaria.main
+```
+
+The API will be available at `http://localhost:8000` (or the host/port specified in your config).
+
+You can now send POST requests to `http://localhost:8000/v1/chat/completions` to use the Chain of Thought reasoning capabilities.
 
 ## API Documentation
 
@@ -116,7 +145,6 @@ Fragaria employs a sophisticated Chain of Thought (CoT) reasoning process enhanc
 7. **Adaptive Learning**: Updates the scoring database and RL model to improve future performance.
 
 This RL-enhanced process allows Fragaria to not only tackle a wide range of problems but also to learn and adapt its strategies over time, becoming increasingly efficient at solving both familiar and novel problem types.
-
 
 ## Contributing
 

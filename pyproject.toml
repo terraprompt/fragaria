@@ -1,9 +1,19 @@
 [tool.poetry]
 name = "fargaria"
 version = "0.1.0"
-description = ""
+description = "Advanced Chain of Thought (CoT) Reasoning API with Reinforcement Learning (RL)"
 authors = ["Dipankar Sarkar <me@dipankar.name>"]
 readme = "README.md"
+license = "MIT"
+repository = "https://github.com/terraprompt/fragaria"
+keywords = ["ai", "llm", "chain-of-thought", "reinforcement-learning", "reasoning"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+]
 
 [tool.poetry.dependencies]
 python = "^3.11"
@@ -15,7 +25,16 @@ pydantic = "^2.9.1"
 uvicorn = "^0.30.6"
 aiofiles = "^24.1.0"
 
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.2"
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+fargaria = "fargaria.cli:main"
+fargaria-server = "fargaria.cli:server"
+
+[tool.poetry.urls]
+"Bug Tracker" = "https://github.com/terraprompt/fragaria/issues"
