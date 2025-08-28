@@ -52,10 +52,10 @@ poetry install
 1. Create a configuration file by copying the default:
    ```bash
    # If installed via pip
-   cp /path/to/site-packages/fargaria/core/config.yaml ./config.yaml
+   cp /path/to/site-packages/fargaria/config.yaml ./config.yaml
    
    # If installed from source
-   cp fargaria/fargaria/core/config.yaml ./config.yaml
+   cp fargaria/fargaria/config.yaml ./config.yaml
    ```
 
 2. Open `config.yaml` and update the following settings:
@@ -63,6 +63,8 @@ poetry install
    - Add your API keys for the respective providers
    - Adjust the model names if necessary
    - Modify the database path and server settings if needed
+
+**Important**: You must update the configuration file with your actual API keys for the LLM provider you want to use. The default values are placeholders and will not work.
 
 ## Usage
 
@@ -72,7 +74,7 @@ Fragaria can be used as a Python library in your own projects:
 
 ```python
 import asyncio
-from fargaria.core import analyze_problem
+from fargaria import analyze_problem
 
 async def main():
     result = await analyze_problem("How many 'r's in strawberry?")
@@ -87,15 +89,18 @@ You can also use the `FragariaCore` class for more advanced usage:
 
 ```python
 import asyncio
-from fargaria.core import FragariaCore
+from fargaria import FragariaCore
 
 async def main():
-    core = FragariaCore()
+    # Initialize with a custom config file path (optional)
+    core = FragariaCore("path/to/your/config.yaml")
     result = await core.parallel_cot_reasoning("How many 'r's in strawberry?")
     print(result["result"])
 
 asyncio.run(main())
 ```
+
+**Note**: Before running the examples, you must configure your API keys in the `config.yaml` file. See the [Configuration](#configuration) section for details.
 
 ### Command Line Interface
 

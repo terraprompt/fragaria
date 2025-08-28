@@ -17,7 +17,22 @@ import math
 def load_config(config_path: str = None) -> Dict[str, Any]:
     """Load configuration from YAML file"""
     if config_path is None:
-        config_path = os.path.join(os.path.dirname(__file__), "config.yaml")
+        # Try to load from package directory first, then from current working directory
+        package_config = os.path.join(os.path.dirname(__file__), "config.yaml")
+        cwd_config = os.path.join(os.getcwd(), "config.yaml")
+        
+        # Prefer package config if it exists, otherwise use cwd config
+        if os.path.exists(package_config):
+            config_path = package_config
+        elif os.path.exists(cwd_config):
+            config_path = cwd_config
+        else:
+            config_path = package_config  # Default to package path for error message
+            
+    if not os.path.exists(config_path):
+        raise FileNotFoundError(f"Configuration file not found at {config_path}. "
+                                "Please create a config.yaml file with your API keys.")
+    
     with open(config_path, "r") as config_file:
         return yaml.safe_load(config_file)
 
@@ -31,15 +46,21 @@ class FragariaCore:
         self.LLM_PROVIDER = self.config["llm_provider"]
         if self.LLM_PROVIDER == "openai":
             self.api_key = self.config["openai_api_key"]
+            if self.api_key == "YOUR_OPENAI_API_KEY_HERE" or not self.api_key:
+                raise ValueError("OpenAI API key not configured. Please update your config.yaml file with a valid API key.")
             self.client = openai.OpenAI(api_key=self.config["openai_api_key"])
         elif self.LLM_PROVIDER == "groq":
             self.api_key = self.config["groq_api_key"]
+            if self.api_key == "YOUR_GROQ_API_KEY_HERE" or not self.api_key:
+                raise ValueError("Groq API key not configured. Please update your config.yaml file with a valid API key.")
             self.client = openai.OpenAI(
                 base_url="https://api.groq.com/openai/v1",
                 api_key=self.config["groq_api_key"]
             )
         elif self.LLM_PROVIDER == "together":
             self.api_key = self.config["together_api_key"]
+            if self.api_key == "YOUR_TOGETHER_API_KEY_HERE" or not self.api_key:
+                raise ValueError("Together API key not configured. Please update your config.yaml file with a valid API key.")
             self.client = openai.OpenAI(
                 api_key=self.config["together_api_key"],
                 base_url="https://api.together.xyz/v1",

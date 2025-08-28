@@ -1,1 +1,42 @@
-/home/dipankar/Github/fragaria/fargaria/core/config.yaml
+# Fragaria Configuration File
+# 
+# IMPORTANT: Update the API keys for the LLM providers you want to use
+# You can get API keys from:
+# - OpenAI: https://platform.openai.com/account/api-keys
+# - Groq: https://console.groq.com/keys
+# - Together.ai: https://api.together.xyz/settings/api-keys
+
+llm_provider: openai
+openai_api_key: YOUR_OPENAI_API_KEY_HERE
+groq_api_key: YOUR_GROQ_API_KEY_HERE
+together_api_key: YOUR_TOGETHER_API_KEY_HERE
+
+model_config:
+  openai:
+    classify: gpt-4o
+    generate: gpt-4o
+    analyze: gpt-4o
+    combine: gpt-4o
+    evaluate: gpt-4o
+    adapt: gpt-4o
+  groq:
+    classify: mixtral-8x7b-32768
+    generate: mixtral-8x7b-32768
+    analyze: mixtral-8x7b-32768
+    combine: mixtral-8x7b-32768
+    evaluate: mixtral-8x7b-32768
+    adapt: mixtral-8x7b-32768
+  together:
+    classify: mistralai/Mixtral-8x7B-Instruct-v0.1
+    generate: mistralai/Mixtral-8x7B-Instruct-v0.1
+    analyze: mistralai/Mixtral-8x7B-Instruct-v0.1
+    combine: mistralai/Mixtral-8x7B-Instruct-v0.1
+    evaluate: mistralai/Mixtral-8x7B-Instruct-v0.1
+    adapt: mistralai/Mixtral-8x7B-Instruct-v0.1
+
+database:
+  path: cot_database.db
+
+server:
+  host: 0.0.0.0
+  port: 8000

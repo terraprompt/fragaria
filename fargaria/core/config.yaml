@@ -1,7 +1,15 @@
+# Fragaria Configuration File
+# 
+# IMPORTANT: Update the API keys for the LLM providers you want to use
+# You can get API keys from:
+# - OpenAI: https://platform.openai.com/account/api-keys
+# - Groq: https://console.groq.com/keys
+# - Together.ai: https://api.together.xyz/settings/api-keys
+
 llm_provider: openai
-openai_api_key: UseOwnAPIKey
-groq_api_key: your_groq_api_key_here
-together_api_key: your_together_api_key_here
+openai_api_key: YOUR_OPENAI_API_KEY_HERE
+groq_api_key: YOUR_GROQ_API_KEY_HERE
+together_api_key: YOUR_TOGETHER_API_KEY_HERE
 
 model_config:
   openai:

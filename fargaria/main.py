@@ -17,12 +17,25 @@ import yaml
 from .core import FragariaCore
 
 # Load configuration
-config_path = os.path.join(os.path.dirname(__file__), "core", "config.yaml")
-with open(config_path, "r") as config_file:
-    config = yaml.safe_load(config_file)
+config_path = os.path.join(os.path.dirname(__file__), "config.yaml")
 
-# Initialize Fragaria core
-fragaria_core = FragariaCore(config_path)
+try:
+    with open(config_path, "r") as config_file:
+        config = yaml.safe_load(config_file)
+    
+    # Initialize Fragaria core
+    fragaria_core = FragariaCore(config_path)
+except ValueError as e:
+    print(f"Configuration Error: {e}")
+    print("Please update your config.yaml file with valid API keys.")
+    fragaria_core = None
+except FileNotFoundError:
+    print(f"Configuration file not found at {config_path}")
+    print("Please create a config.yaml file with your API keys.")
+    fragaria_core = None
+except Exception as e:
+    print(f"Error initializing Fragaria core: {e}")
+    fragaria_core = None
 
 # FastAPI setup
 app = FastAPI(
@@ -67,6 +80,9 @@ async def chat_completions(request: ChatCompletionRequest, background_tasks: Bac
     """
     Perform a chat completion using the Chain of Thought reasoning process.
     """
+    if fragaria_core is None:
+        raise HTTPException(status_code=500, detail="Fragaria core not initialized. Please check your configuration.")
+    
     if request.model not in ["faragia-dev"]:
         raise HTTPException(status_code=400, detail="Unsupported model")
     
