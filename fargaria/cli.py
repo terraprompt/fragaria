@@ -4,8 +4,7 @@ import argparse
 import asyncio
 import sys
 import json
-from typing import List, Dict
-from .main import parallel_cot_reasoning
+from .core import analyze_problem
 
 def main():
     """Main CLI entry point"""
@@ -45,12 +44,12 @@ def main():
         
     # Run the analysis
     try:
-        result = asyncio.run(parallel_cot_reasoning(input_text, args.system_prompt))
+        result = asyncio.run(analyze_problem(input_text, args.system_prompt))
         
         if args.output_format == "json":
             print(json.dumps(result, indent=2))
         else:
-            print(result)
+            print(result["result"])
     except Exception as e:
         print(f"Error: {e}", file=sys.stderr)
         sys.exit(1)

@@ -3,7 +3,7 @@
 
 ![Fragaria Logo](header.png)
 
-Fragaria is a powerful and flexible Chain of Thought (CoT) reasoning API that leverages various Language Model (LLM) providers and incorporates Reinforcement Learning (RL) techniques to solve complex problems and answer intricate questions. Named after the botanical genus of strawberries, Fragaria pays homage to the famous "How many 'r's in strawberry?" problem, symbolizing its ability to tackle both simple and complex queries with equal finesse.
+Fragaria is a powerful and flexible Chain of Thought (CoT) reasoning library that leverages various Language Model (LLM) providers and incorporates Reinforcement Learning (RL) techniques to solve complex problems and answer intricate questions. Named after the botanical genus of strawberries, Fragaria pays homage to the famous "How many 'r's in strawberry?" problem, symbolizing its ability to tackle both simple and complex queries with equal finesse.
 
 ## Table of Contents
 
@@ -11,6 +11,7 @@ Fragaria is a powerful and flexible Chain of Thought (CoT) reasoning API that le
 - [Installation](#installation)
 - [Configuration](#configuration)
 - [Usage](#usage)
+  - [As a Library](#as-a-library)
   - [Command Line Interface](#command-line-interface)
   - [Web Service](#web-service)
 - [API Documentation](#api-documentation)
@@ -28,6 +29,7 @@ Fragaria is a powerful and flexible Chain of Thought (CoT) reasoning API that le
 - **OpenAPI Documentation**: Comprehensive API documentation with Swagger UI and ReDoc.
 - **CORS Support**: Built-in Cross-Origin Resource Sharing for easy integration with web applications.
 - **CLI Tools**: Command-line interface for easy testing and integration.
+- **Python Library**: Usable as a Python library in your own projects.
 
 ## Installation
 
@@ -50,10 +52,10 @@ poetry install
 1. Create a configuration file by copying the default:
    ```bash
    # If installed via pip
-   cp /path/to/site-packages/fargaria/config.yaml ./config.yaml
+   cp /path/to/site-packages/fargaria/core/config.yaml ./config.yaml
    
    # If installed from source
-   cp fargaria/fargaria/config.yaml ./config.yaml
+   cp fargaria/fargaria/core/config.yaml ./config.yaml
    ```
 
 2. Open `config.yaml` and update the following settings:
@@ -63,6 +65,37 @@ poetry install
    - Modify the database path and server settings if needed
 
 ## Usage
+
+### As a Library
+
+Fragaria can be used as a Python library in your own projects:
+
+```python
+import asyncio
+from fargaria.core import analyze_problem
+
+async def main():
+    result = await analyze_problem("How many 'r's in strawberry?")
+    print(result["result"])
+
+asyncio.run(main())
+```
+
+For more examples, see the `example.py` file in the repository.
+
+You can also use the `FragariaCore` class for more advanced usage:
+
+```python
+import asyncio
+from fargaria.core import FragariaCore
+
+async def main():
+    core = FragariaCore()
+    result = await core.parallel_cot_reasoning("How many 'r's in strawberry?")
+    print(result["result"])
+
+asyncio.run(main())
+```
 
 ### Command Line Interface
 
@@ -145,6 +178,65 @@ Fragaria employs a sophisticated Chain of Thought (CoT) reasoning process enhanc
 7. **Adaptive Learning**: Updates the scoring database and RL model to improve future performance.
 
 This RL-enhanced process allows Fragaria to not only tackle a wide range of problems but also to learn and adapt its strategies over time, becoming increasingly efficient at solving both familiar and novel problem types.
+
+## Core Library
+
+Fragaria's core library provides a powerful Python API for integrating Chain of Thought reasoning into your applications. The main components are:
+
+### FragariaCore Class
+
+The `FragariaCore` class is the primary interface for interacting with Fragaria's reasoning engine:
+
+```python
+from fargaria.core import FragariaCore
+
+# Initialize the core with default or custom configuration
+core = FragariaCore()
+
+# Perform reasoning on a problem
+result = await core.parallel_cot_reasoning("How many 'r's in strawberry?")
+```
+
+Key methods of the `FragariaCore` class include:
+
+- `parallel_cot_reasoning(text, system_prompt)`: Main entry point that performs the complete CoT reasoning process
+- `classify_or_create_problem_type(text)`: Classifies a problem or creates a new type
+- `generate_cot_paths(text, problem_type)`: Generates multiple reasoning approaches
+- `run_cot_path(session, text, path, problem_type, system_prompt)`: Executes a single reasoning path
+- `combine_results(results, problem_type, system_prompt)`: Synthesizes results from multiple paths
+- `evaluate_result(text, result, problem_type, system_prompt)`: Evaluates the quality of results
+- `update_cot_scores(problem_type, paths, scores)`: Updates path scores in the database
+- `select_cot_paths(problem_type, n)`: Selects reasoning paths using UCB algorithm
+- `adapt_cot_path(path, problem_type, text, system_prompt)`: Adapts existing paths for new problems
+
+### Convenience Functions
+
+For simpler use cases, Fragaria provides convenience functions:
+
+```python
+from fargaria.core import analyze_problem
+
+# Simple async function for analyzing problems
+result = await analyze_problem("How many 'r's in strawberry?")
+```
+
+### Configuration
+
+The core library is configured through a YAML file that specifies:
+
+- LLM provider settings (OpenAI, Groq, Together.ai)
+- Model configurations for different reasoning stages
+- Database path for storing CoT path scores
+- Server settings for the web API
+
+### Database Integration
+
+Fragaria uses SQLite to store and update scores for different reasoning paths, enabling the Reinforcement Learning component to improve over time. The database tracks:
+
+- Problem types
+- Reasoning methods
+- Performance scores
+- Usage statistics
 
 ## Contributing
 

@@ -1,107 +1,97 @@
-# This repo is no longer maintained. Consider using `npm init vite` and selecting the `svelte` option or — if you want a full-fledged app framework — use [SvelteKit](https://kit.svelte.dev), the official application framework for Svelte.
+# Fragaria Frontend
 
----
+This is the frontend interface for Fragaria, an advanced Chain of Thought (CoT) Reasoning API with Reinforcement Learning (RL).
 
-# svelte app
+## Overview
 
-This is a project template for [Svelte](https://svelte.dev) apps. It lives at https://github.com/sveltejs/template.
+The frontend provides a user-friendly web interface to interact with the Fragaria API. It allows users to:
 
-To create a new project based on this template using [degit](https://github.com/Rich-Harris/degit):
+- Submit problems for analysis using natural language
+- View the Chain of Thought reasoning process
+- See the final results in a clean, readable format
 
-```bash
-npx degit sveltejs/template svelte-app
-cd svelte-app
-```
+## Getting Started
 
-*Note that you will need to have [Node.js](https://nodejs.org) installed.*
+### Prerequisites
 
+- Node.js (v14 or higher)
+- npm (comes with Node.js)
 
-## Get started
+### Installation
 
-Install the dependencies...
+1. Install the dependencies:
+   ```bash
+   npm install
+   ```
 
-```bash
-cd svelte-app
-npm install
-```
+2. Build the frontend:
+   ```bash
+   npm run build
+   ```
 
-...then start [Rollup](https://rollupjs.org):
+### Development
 
+To run the development server with hot reloading:
 ```bash
 npm run dev
 ```
 
-Navigate to [localhost:8080](http://localhost:8080). You should see your app running. Edit a component file in `src`, save it, and reload the page to see your changes.
+Navigate to [localhost:8080](http://localhost:8080) to view the application.
 
-By default, the server will only respond to requests from localhost. To allow connections from other computers, edit the `sirv` commands in package.json to include the option `--host 0.0.0.0`.
+### Production
 
-If you're using [Visual Studio Code](https://code.visualstudio.com/) we recommend installing the official extension [Svelte for VS Code](https://marketplace.visualstudio.com/items?itemName=svelte.svelte-vscode). If you are using other editors you may need to install a plugin in order to get syntax highlighting and intellisense.
-
-## Building and running in production mode
-
-To create an optimised version of the app:
-
+To create an optimized production build:
 ```bash
 npm run build
 ```
 
-You can run the newly built app with `npm run start`. This uses [sirv](https://github.com/lukeed/sirv), which is included in your package.json's `dependencies` so that the app will work when you deploy to platforms like [Heroku](https://heroku.com).
-
-
-## Single-page app mode
-
-By default, sirv will only respond to requests that match files in `public`. This is to maximise compatibility with static fileservers, allowing you to deploy your app anywhere.
-
-If you're building a single-page app (SPA) with multiple routes, sirv needs to be able to respond to requests for *any* path. You can make it so by editing the `"start"` command in package.json:
-
-```js
-"start": "sirv public --single"
-```
-
-## Using TypeScript
-
-This template comes with a script to set up a TypeScript development environment, you can run it immediately after cloning the template with:
-
+To serve the production build:
 ```bash
-node scripts/setupTypeScript.js
+npm run start
 ```
 
-Or remove the script via:
+## Integration with Fragaria API
 
+The frontend is designed to work seamlessly with the Fragaria backend API. When you run the Fragaria server, it will automatically serve the frontend at the root path.
+
+To start the Fragaria server with the frontend:
 ```bash
-rm scripts/setupTypeScript.js
+fargaria-server
 ```
 
-If you want to use `baseUrl` or `path` aliases within your `tsconfig`, you need to set up `@rollup/plugin-alias` to tell Rollup to resolve the aliases. For more info, see [this StackOverflow question](https://stackoverflow.com/questions/63427935/setup-tsconfig-path-in-svelte).
-
-## Deploying to the web
-
-### With [Vercel](https://vercel.com)
-
-Install `vercel` if you haven't already:
-
+Or directly with Python:
 ```bash
-npm install -g vercel
+python -m fargaria.main
 ```
 
-Then, from within your project folder:
+The API will be available at `http://localhost:8000` by default, with the frontend served at the root path.
 
-```bash
-cd public
-vercel deploy --name my-project
-```
+## Architecture
 
-### With [surge](https://surge.sh/)
+The frontend is built with Svelte and communicates with the Fragaria API through HTTP requests. It features:
 
-Install `surge` if you haven't already:
+- A clean, responsive design
+- Real-time display of the reasoning process
+- Error handling and user feedback
+- Mobile-friendly interface
 
-```bash
-npm install -g surge
-```
+## Customization
 
-Then, from within your project folder:
+You can customize the frontend by modifying the Svelte components in the `src` directory. The main entry point is `src/main.js`, and the main component is `src/App.svelte`.
 
-```bash
-npm run build
-surge public my-project.surge.sh
-```
+## Deployment
+
+To deploy the frontend, you need to:
+
+1. Build the frontend: `npm run build`
+2. Start the Fragaria server: `fargaria-server`
+
+The Fragaria server will automatically serve the built frontend files.
+
+## Contributing
+
+Contributions to improve the frontend are welcome. Please follow the main Fragaria contributing guidelines.
+
+## License
+
+This frontend is part of the Fragaria project and is licensed under the MIT License. See the main project LICENSE file for details.
