@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "fragaria" 
-version = "0.1.1"
+version = "0.1.2"
 description = "Advanced Chain of Thought (CoT) Reasoning API with Reinforcement Learning (RL)"
 authors = ["Dipankar Sarkar <me@dipankar.name>"]
 readme = "README.md"
